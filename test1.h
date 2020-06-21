@@ -11,10 +11,11 @@ class GeneMatrix
     using matrix = vector<vector<double>>;
 
 public:
-    GeneMatrix(const matrix data, const vector<double> vec) : mat(data), vec(vec), outVec(makeOutVec(data, vec)){};
-    GeneMatrix(GeneMatrix& other) = default;
+    GeneMatrix(const matrix data, const vector<double> vec): GeneMatrix(data, vec, makeOutVec(data, vec)){};
+    // deleted to stop stupid copying. Please pass by reference for performance reasons
+    GeneMatrix(const GeneMatrix& other) = delete;
     GeneMatrix(GeneMatrix&& other) = default;
-    const vector<double> getOut()
+    const vector<double>& getOut() const
     {
         return outVec;
     }
@@ -26,14 +27,16 @@ public:
     }
     // GeneMatrix(matrix &&data) : mat(data){};
     // GeneMatrix(const matrix &data) : mat(data){};
-    friend void validate(GeneMatrix gm);
-    friend void test(GeneMatrix gm);
+    friend void validate(const GeneMatrix& gm);
+    friend void test(GeneMatrix& gm);
 private:
+    GeneMatrix(const matrix data, const vector<double> vec, const vector<double> outvec) : mat(data), vec(vec), outVec(outvec){};
+
     matrix mat;
     const vector<double> vec;
     vector<double> outVec;
 
-    vector<double> makeOutVec(const matrix data, const vector<double> vec)
+    vector<double> makeOutVec(const matrix data, const vector<double> vec) const
     {
         assert(data.size() >0);
         // assert(data[0].size() == vec.size());
